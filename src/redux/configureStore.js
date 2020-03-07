@@ -9,21 +9,21 @@ import clients from '../utility/clients';
 import rootReducer from './rootReducers';
 
 const persistConfig = {
-  key: 'root',
-  blacklist: [],
-  whitelist: ['auth'],
-  keyPrefix: appName,
-  storage: AsyncStorage
+    key: 'root',
+    blacklist: [],
+    whitelist: ['auth'],
+    keyPrefix: appName,
+    storage: AsyncStorage
 };
 const middlewares = [
-  thunkMiddleware,
-  multiClientMiddleware(clients),
+    thunkMiddleware,
+    multiClientMiddleware(clients),
 ];
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 export default () => {
-  let store = createStore(persistedReducer, composeWithDevTools(
-    applyMiddleware(...middlewares),
-  ));
-  let persistor = persistStore(store);
-  return { store, persistor };
+    let store = createStore(persistedReducer, composeWithDevTools(
+        applyMiddleware(...middlewares),
+    ));
+    let persistor = persistStore(store);
+    return { store, persistor };
 };

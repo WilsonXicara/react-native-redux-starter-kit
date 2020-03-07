@@ -6,8 +6,8 @@ import fincas from './modules/fincas';
 import usuarios from './modules/usuarios';
 
 export default combineReducers({
-  form: formReducer,
-  modal,
-  fincas,
-  usuarios,
+    form: formReducer,
+    modal,
+    fincas,
+    usuarios,
 });
