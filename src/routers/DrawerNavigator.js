@@ -1,6 +1,6 @@
 import React from 'react';
 import { createDrawerNavigator } from 'react-navigation';
-import SideBar from '../containers/SlidebarContainer';
+import Sidebar from '../common/components/Layout/Sidebar';
 import Home from '../common/components/Demo/Home/Home';
 import Modal from '../common/components/Demo/Modal';
 
@@ -11,6 +11,6 @@ export default createDrawerNavigator(
     },
     {
         initialRouteName: 'Home',
-        contentComponent: props => <SideBar {...props} />
+        contentComponent: props => <Sidebar {...props} />
     }
 );
