@@ -2,7 +2,7 @@ import React from 'react';
 import { createDrawerNavigator } from 'react-navigation';
 import SideBar from '../containers/SlidebarContainer';
 import Home from '../common/components/Demo/Home/Home';
-import Modal from '../containers/ModalContainer';
+import Modal from '../common/components/Demo/Modal';
 
 export default createDrawerNavigator(
     {
