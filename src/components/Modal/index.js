@@ -9,6 +9,8 @@ import ListModal from "./listModal";
 
 export default class ModalBox extends Component {
   render() {
+    const { data, loader, page } = this.props;
+    console.log('DATA:', data);
     return (
       <Container style={styles.container}>
         <StatusBar translucent={false}/>
@@ -44,6 +46,15 @@ export default class ModalBox extends Component {
           <Button block style={styles.btnShowModal} onPress={() => this.props.handleOpen("scrollModal")}>
             <Text>Scroll Modal</Text>
           </Button>
+                    {
+                        (data && data.results) && (
+                            data.results.map(item => {
+                                return <Button block style={styles.btnShowModal}>
+                                    <Text>{item.nombre}</Text>
+                                </Button>
+                            })
+                        )
+                    }
         </Content>
       </Container>
     );

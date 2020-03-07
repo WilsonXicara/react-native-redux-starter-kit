@@ -8,7 +8,8 @@ class LoadingContainer extends Component {
     setTimeout(() => {
       SplashScreen.hide();
     }, 300);
-    this.props.navigation.navigate(this.props.auth.token ? "App" : "Login");
+    // this.props.navigation.navigate(this.props.auth.token ? "App" : "Login");
+    this.props.navigation.navigate("App");
   }
   render() {
     return (

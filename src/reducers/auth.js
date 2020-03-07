@@ -18,20 +18,21 @@ export default (state = initialState, action) => {
         isFailed: false
       };
     case ACTION_TYPES.USER_LOGIN_SUCCESS:
-      console.log(payload);
+      console.log(ACTION_TYPES.USER_LOGIN_SUCCESS, ' -> ', payload);
       return {
         token: payload.data.token,
         isAuthenticating: false,
         isFailed: false
       };
     case ACTION_TYPES.USER_LOGIN_FAILED:
-      console.log(action);
+      console.log(ACTION_TYPES.USER_LOGIN_FAILED, ' -> ', action);
       return {
         error: error.response.data.message,
         isAuthenticating: false,
         isFailed: true
       };
     case ACTION_TYPES.USER_LOGOUT_REQUESTED:
+      console.log(ACTION_TYPES.USER_LOGOUT_REQUESTED, ' -> ', action);
       return {
         ...initialState
       };

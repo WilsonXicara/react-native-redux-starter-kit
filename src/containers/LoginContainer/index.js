@@ -30,11 +30,12 @@ class LoginForm extends Component {
       }
     }
 
-    if (this.props.auth.token !== nextProps.auth.token){
-      if (nextProps.auth.token){
-        this.props.navigation.navigate("App");
-      }
-    }
+    this.props.navigation.navigate("App");
+    // if (this.props.auth.token !== nextProps.auth.token){
+    //   if (nextProps.auth.token){
+    //     this.props.navigation.navigate("App");
+    //   }
+    // }
   }
 
   renderInput({ input, label, type, meta: { touched, error, warning } }) {

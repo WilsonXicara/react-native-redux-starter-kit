@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Provider } from "react-redux";
-import configureStore from "./stores/configureStore";
+// import configureStore from "./stores/configureStore";
+import configureStore from "./redux/configureStore";
 import { PersistGate } from "redux-persist/integration/react";
 import App from "./routers/App";
 import getTheme from "../native-base-theme/components";
