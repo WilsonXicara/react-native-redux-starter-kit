@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 import Sidebar from "../components/Sidebar";
 import { connect } from "react-redux";
-import { userRequestLogout } from "../../../../actions";
+// import { userRequestLogout } from "../../../../actions";
+import { actions } from "../../../../actions/auth";
 
 class SidebarContainer extends Component {
 	constructor(props) {
@@ -27,7 +28,7 @@ class SidebarContainer extends Component {
 
 	navigator(data) {
 		if (data.route === "Logout") {
-			this.props.logout();
+			this.props.logoutSubmit();
 			this.props.navigation.navigate("Login");
 		} else {
 			this.props.navigation.navigate(data.route);
@@ -43,11 +44,15 @@ class SidebarContainer extends Component {
 	}
 }
 
-const mapDispatchToProps = dispatch => ({
-	logout: () => dispatch(userRequestLogout())
-});
+// const mapDispatchToProps = dispatch => ({
+// 	logout: () => dispatch(userRequestLogout())
+// });
+const mdtp = {
+    ...actions
+};
 
 export default connect(
 	null,
-	mapDispatchToProps
+	mdtp,
+	// mapDispatchToProps
 )(SidebarContainer);

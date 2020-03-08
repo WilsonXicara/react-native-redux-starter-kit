@@ -6,6 +6,7 @@ import { Field, reduxForm } from 'redux-form';
 import { connect } from 'react-redux';
 import Login from '../components/Login';
 import { userLoginSuccess, userLoginFail } from '../../../../actions';
+import { actions } from '../../../../actions/auth';
 import { emailFormat, required, alphaNumeric } from './validators';
 import styles from  './styles';
 
@@ -21,6 +22,8 @@ class LoginForm extends Component {
 	}
 
 	componentWillReceiveProps(nextProps, nextState){
+		console.log('LOGIN-nextProps.auth:', nextProps.auth)
+		console.log('LOGIN-props.auth:', this.props.auth)
 		if (this.props.auth.isFailed !== nextProps.auth.isFailed){
 			if (nextProps.auth.isFailed && !nextProps.auth.isAuthenticating){
 				let message = nextProps.auth.error;
@@ -57,11 +60,13 @@ class LoginForm extends Component {
 	login() {
 		if (this.props.valid) {
 			let { email, password } = this.props.loginForm.values;
-			if (email === 'demo@gmail.com'){
-				this.props.loginSuccess({email, password});
-			} else {
-				this.props.loginFail({email, password});
-			}
+			this.props.loginSubmit({email, password});
+			console.log('LOGIN-login().props.auth:', this.props)
+			// if (email === 'demo@gmail.com'){
+			// 	this.props.loginSuccess({email, password});
+			// } else {
+			// 	this.props.loginFail({email, password});
+			// }
 		} else {
 			Toast.show({
 				text: 'Enter Valid Username & password!',
@@ -125,18 +130,22 @@ const mapStateToProps = state => ({
 	loginForm: state.form.login
 });
 
-const mapDispatchToProps = dispatch => ({
-	loginSuccess: ({ email, password }) => dispatch(userLoginSuccess({
-		email,
-		password,
-	})),
-	loginFail: ({ email, password }) => dispatch(userLoginFail({
-		email,
-		password,
-	})),
-});
+// const mapDispatchToProps = dispatch => ({
+// 	loginSuccess: ({ email, password }) => dispatch(userLoginSuccess({
+// 		email,
+// 		password,
+// 	})),
+// 	loginFail: ({ email, password }) => dispatch(userLoginFail({
+// 		email,
+// 		password,
+// 	})),
+// });
+const mdtp = {
+    ...actions
+};
 
 export default connect(
 	mapStateToProps,
-	mapDispatchToProps
+	mdtp,
+	// mapDispatchToProps
 )(LoginContainer);
