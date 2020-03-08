@@ -56,8 +56,8 @@ class LoginForm extends Component {
 
 	login() {
 		if (this.props.valid) {
-			let { email, password } = this.props.loginForm.values;
-			this.props.loginSubmit({email, password});
+			let {username, email, password } = this.props.loginForm.values;
+			this.props.loginSubmit({username, password});
 		} else {
 			Toast.show({
 				text: 'Enter Valid Username & password!',
@@ -83,10 +83,15 @@ class LoginForm extends Component {
 		const form = (
 			<Form>
 				<Field
+					name="username"
+					component={this.renderInput}
+					validate={[required]}
+				/>
+				{/* <Field
 					name="email"
 					component={this.renderInput}
 					validate={[emailFormat, required]}
-				/>
+				/> */}
 				<Field
 					name="password"
 					component={this.renderInput}
@@ -115,7 +120,9 @@ LoginForm.propTypes = {
 const LoginContainer = reduxForm({
 	form: 'login',
     initialValues: {
-        email: 'demo@gmail.com',
+        username: 'wilson',
+        // email: 'demo@gmail.com',
+        password: 'wilsongxx',
     },
 })(LoginForm);
 
