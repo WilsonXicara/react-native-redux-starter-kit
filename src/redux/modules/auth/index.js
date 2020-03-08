@@ -1,6 +1,7 @@
 import { handleActions } from 'redux-actions';
 import { AsyncStorage } from 'react-native';
 import axios from 'axios/index';
+import { api, KEY_USER_TOKEN, KEY_USER_INFO } from '../../../utility/api';
 import { URL_BASE } from '../../../utility/constants';
 
 const LOADER = "USER_LOGIN_LOADER";
@@ -51,11 +52,14 @@ const loginSubmit = (data) => async (dispatch) => {
 	dispatch(setIsAuthenticating(true));
 	dispatch(setIsFailed(false));
 	try {
-		const response = await axios.post(`${URL_BASE}user/token/`, data, {headers: header});
-		await AsyncStorage.setItem('ENTRE_RIOS_USER_TOKEN', response.data.token);
-		dispatch(setToken(response.data.token));
-		dispatch(setMe(response.data.user));
+		const response = await api.post('user/token/', data);
+		await AsyncStorage.setItem(KEY_USER_TOKEN, response.token);
+		// TODO: Pendiente cómo guardar un objeto
+		// await AsyncStorage.setItem(KEY_USER_INFO, response.user);
+		dispatch(setToken(response.token));
+		dispatch(setMe(response.user));
 	} catch(error) {
+		console.log('ERROR-LOGIN:', error)
 		dispatch(setError(error));
 		dispatch(setIsFailed(true));
 	} finally {
@@ -63,12 +67,37 @@ const loginSubmit = (data) => async (dispatch) => {
 		dispatch(setLoader(false));
 	}
 };
+// 
+// const loginSubmit = (data) => async (dispatch) => {
+// 	dispatch(setLoader(true));
+// 	dispatch(setIsAuthenticating(true));
+// 	dispatch(setIsFailed(false));
+// 	api.post('user/token/', data)
+// 		.then(response => {
+// 			dispatch(setToken(response.token));
+// 			dispatch(setMe(response.user));
+// 		})
+// 		.catch(error => {
+// 			dispatch(setError(error));
+// 			dispatch(setIsFailed(true));
+// 		})
+// 		.finally(() => {
+// 			dispatch(setIsAuthenticating(false));
+// 			dispatch(setLoader(false));
+// 		});
+// };
 const logoutSubmit = () => async (dispatch) => {
-	dispatch(setLoader(true));
-	dispatch(setToken(null));
-	dispatch(setLoader(false));
-	const token = await AsyncStorage.getItem('ENTRE_RIOS_USER_TOKEN');
-	console.log('TOKEN-GUARDADO:', token)
+	try {
+		const token = await AsyncStorage.getItem(KEY_USER_TOKEN);
+		await AsyncStorage.removeItem(KEY_USER_TOKEN);
+		console.log('TOKEN-ELIMINADO:', token)
+	} catch(error) {
+		console.log('ERROR-LOGOUT:', error)
+	} finally {
+		dispatch(setLoader(true));
+		dispatch(setToken(null));
+		dispatch(setLoader(false));
+	}
 };
 
 export const actions = {
