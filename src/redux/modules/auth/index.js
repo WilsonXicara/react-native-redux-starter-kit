@@ -1,8 +1,6 @@
 import { handleActions } from 'redux-actions';
 import { AsyncStorage } from 'react-native';
-import axios from 'axios/index';
 import { api, KEY_USER_TOKEN, KEY_USER_INFO } from '../../../utility/api';
-import { URL_BASE } from '../../../utility/constants';
 
 const LOADER = "USER_LOGIN_LOADER";
 const ME = "USER_LOGIN_ME";

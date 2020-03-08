@@ -104,6 +104,7 @@ async function post(path, body, params = {}) {
     try {
         const headers = await makeHeaders();
         const response = await request.post(`${baseURL}`, data, {headers});
+        console.log('POST-RESPONSE:', response);
         // Construcción de la Promesa
         return new Promise((resolve, reject) => {
             resolve(response.data ? response.data : response)
@@ -120,6 +121,7 @@ async function post(path, body, params = {}) {
 }
 
 /**
+ * TODO: No revisado
  * Funcion para hacer una peticion post
  * @param path: string: path relativo de la peticion
  * @param body: dict: el body para el post
@@ -145,6 +147,7 @@ function _postMultiPart(path, body, attachments, params = {}) {
 }
 
 /**
+ * TODO: No revisado
  * Funcion para hacer una peticion post
  * @param path: string: path relativo de la peticion
  * @param body: dict: el body para el post
@@ -167,6 +170,7 @@ function postAttachments(path, body, attachments, params = {}) {
 }
 
 /**
+ * TODO: No revisado
  * Funcion para hacer una peticion put
  * @param path: string: path relativo de la peticion
  * @param body: dict: el body para el put
@@ -192,6 +196,7 @@ function _putMultiPart(path, body, attachments, params = {}) {
 }
 
 /**
+ * TODO: No revisado
  * Funcion para hacer una peticion put
  * @param path: string: path relativo de la peticion
  * @param body: dict: el body para el put
@@ -214,43 +219,36 @@ function putAttachments(path, body, attachments, params = {}) {
 }
 
 /**
- * Funcion para hacer una peticion put
- * @param path: string: path relativo de la peticion
- * @param body: dict: el body para el put
- * @param params: dict: parametros para query string, opcionales
- * @return: instancia de superagent lista para ser recibida como promise
- * */
-function _put(path, body, params = {}) {
-    const url = makeUrl(path, params);
-    const token = getToken();
-    if (getToken()) {
-        return request.put(url).send(body).set('Accept', 'application/json').set('Content-Type', 'application/json')
-            .set('Authorization', token);
-    }
-    return request.put(url).send(body).set('Accept', 'application/json').set('Content-Type', 'application/json');
-}
-
-/**
+ * TODO: Aún no probado
  * Funcion para hacer una peticion put
  * @param path: string: path relativo de la peticion
  * @param body: dict: el body para el put
  * @param params: dict: parametros para query string, opcionales
  * @return: Promise: promise del put
  * */
-function put(path, body, params = {}) {
-    return new Promise((resolve, reject) => {
-        _put(path, body, params).then((response) => {
-            if (response.body) {
-                resolve(response.body);
-            }
-            resolve(response);
-        }).catch((error) => {
-            errorHandler(error.response);
-            reject(error.response.body);
+async function put(path, body, params = {}) {
+    const baseURL = makeUrl(path, params);
+    const data = {...body};
+    try {
+        const headers = await makeHeaders();
+        const response = await request.put(`${baseURL}`, data, {headers});
+        console.log('PUT-RESPONSE:', response);
+        // Construcción de la Promesa
+        return new Promise((resolve, reject) => {
+            resolve(response.data ? response.data : response)
         });
-    });
+	} catch(error) {
+        console.log('PUT-ERROR:', error);
+        return new Promise((resolve, reject) => {
+            if (error && error.response) {
+                errorHandler(error.response);
+            }
+            reject(error.response && error.response.body ? error.response.body : error);
+        });
+	}
 }
 /**
+ * TODO: No revisado
  * Funcion para hacer una peticion delete
  * @param path: string: path relativo de la peticion
  * @return: instancia de superagent lista para ser recibida como promise
@@ -266,6 +264,7 @@ function _delete(path) {
 }
 
 /**
+ * TODO: No revisado
  * Funcion para hacer una peticion delete
  * @param path: string: path relativo de la peticion
  * @return: Promise: promise del delete
@@ -288,68 +287,27 @@ function eliminar(path) {
  * Funcion para hacer una peticion get
  * @param path: string: path relativo de la peticion
  * @param params: dict: parametros para query string, opcionales
- * @return: Promise: instancia de superagent lista para ser recibida como promise
- * */
-function _get(path, params = {}) {
-    const url = makeUrl(path, params);
-    const token = getToken();
-    if (getToken()) {
-        return request.get(url).set('Accept', 'application/json').set('Content-Type', 'application/json')
-            .set('Authorization', token);
-    }
-    return request.get(url).set('Accept', 'application/json').set('Content-Type', 'application/json');
-}
-
-/**
- * Funcion para hacer una peticion get
- * @param path: string: path relativo de la peticion
- * @param params: dict: parametros para query string, opcionales
  * @return: Promise: promise del get
  * */
-function get(path, params = {}) {
-    return new Promise((resolve, reject) => {
-        _get(path, params).then((response) => {
-            if (response.body) {
-                resolve(response.body);
-            }
-            resolve(response);
-        }).catch((error) => {
-            errorHandler(error.response);
-            reject(error.response);
+async function get(path, params = {}) {
+    const baseURL = makeUrl(path, params);
+    try {
+        const headers = await makeHeaders();
+        const response = await request.get(`${baseURL}`, {headers});
+        console.log('GET-RESPONSE:', response);
+        // Construcción de la Promesa
+        return new Promise((resolve, reject) => {
+            resolve(response.data ? response.data : response)
         });
-    });
-}
-
-
-/**
- * Funcion para hacer una peticion get
- * @param path: string: path relativo de la peticion
- * @param params: dict: parametros para query string, opcionales
- * @return: Promise: instancia de superagent lista para ser recibida como promise
- * */
-function _getPesosBascula() {
-    const url = 'http://localhost:5000/datos_bascula'
-    return request.get(url).set('Accept', 'application/json').set('Content-Type', 'application/json');
-}
-
-/**
- * Funcion para hacer una peticion get
- * @param path: string: path relativo de la peticion
- * @param params: dict: parametros para query string, opcionales
- * @return: Promise: promise del get
- * */
-function getPesosBascula() {
-    return new Promise((resolve, reject) => {
-        _getPesosBascula().then((response) => {
-            if (response.body) {
-                resolve(response.body);
+	} catch(error) {
+        console.log('GET-ERROR:', error);
+        return new Promise((resolve, reject) => {
+            if (error && error.response) {
+                errorHandler(error.response);
             }
-            resolve(response);
-        }).catch((error) => {
-            errorHandler(error.response);
-            reject(error.response);
+            reject(error.response && error.response.body ? error.response.body : error);
         });
-    });
+	}
 }
 
-export const api = { get, post, put, eliminar, postAttachments, putAttachments, getPesosBascula };
+export const api = { get, post, put, eliminar, postAttachments, putAttachments };
