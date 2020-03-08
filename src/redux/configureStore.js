@@ -5,7 +5,7 @@ import { multiClientMiddleware } from 'redux-axios-middleware';
 import { AsyncStorage } from 'react-native';
 import thunkMiddleware from 'redux-thunk';
 import { name as appName } from '../../app.json';
-import clients from '../stores/clients';
+import clients from '../utility/clients';
 import rootReducer from './rootReducers';
 
 const persistConfig = {

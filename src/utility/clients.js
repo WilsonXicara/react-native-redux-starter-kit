@@ -1,6 +1,6 @@
 import axios from "axios/index";
 import humps from "humps";
-import { AUTH_URL } from "../constants/apis";
+import { AUTH_URL } from "./constants";
 
 const authClient = (baseUrl) => (
   axios.create({
