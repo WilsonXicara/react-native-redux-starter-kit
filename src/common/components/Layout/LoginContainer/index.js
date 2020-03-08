@@ -5,7 +5,7 @@ import { Item, Input, Toast, Form } from 'native-base';
 import { Field, reduxForm } from 'redux-form';
 import { connect } from 'react-redux';
 import Login from '../components/Login';
-import { actions } from '../../../../actions/auth';
+import { actions } from '../../../../redux/modules/auth';
 import { emailFormat, required, alphaNumeric } from './validators';
 import styles from  './styles';
 

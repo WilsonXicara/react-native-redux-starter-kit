@@ -1,34 +1,34 @@
-import React, { Component } from "react";
-import Sidebar from "../components/Sidebar";
-import { connect } from "react-redux";
-import { actions } from "../../../../actions/auth";
+import React, { Component } from 'react';
+import Sidebar from '../components/Sidebar';
+import { connect } from 'react-redux';
+import { actions } from '../../../../redux/modules/auth';
 
 class SidebarContainer extends Component {
 	constructor(props) {
 		super(props);
 		this.data = [
 			{
-				name: "Home",
-				route: "Home",
-				icon: "home"
+				name: 'Home',
+				route: 'Home',
+				icon: 'home'
 			},
 			{
-				name: "Modal",
-				route: "Modal",
-				icon: "albums"
+				name: 'Modal',
+				route: 'Modal',
+				icon: 'albums'
 			},
 			{
-				name: "Logout",
-				route: "Logout",
-				icon: "log-out"
+				name: 'Logout',
+				route: 'Logout',
+				icon: 'log-out'
 			}
 		];
 	}
 
 	navigator(data) {
-		if (data.route === "Logout") {
+		if (data.route === 'Logout') {
 			this.props.logoutSubmit();
-			this.props.navigation.navigate("Login");
+			this.props.navigation.navigate('Login');
 		} else {
 			this.props.navigation.navigate(data.route);
 		}
