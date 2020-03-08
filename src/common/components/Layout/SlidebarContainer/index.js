@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import Sidebar from "../components/Sidebar";
 import { connect } from "react-redux";
-// import { userRequestLogout } from "../../../../actions";
 import { actions } from "../../../../actions/auth";
 
 class SidebarContainer extends Component {
@@ -44,15 +43,8 @@ class SidebarContainer extends Component {
 	}
 }
 
-// const mapDispatchToProps = dispatch => ({
-// 	logout: () => dispatch(userRequestLogout())
-// });
 const mdtp = {
     ...actions
 };
 
-export default connect(
-	null,
-	mdtp,
-	// mapDispatchToProps
-)(SidebarContainer);
+export default connect(null, mdtp)(SidebarContainer);
