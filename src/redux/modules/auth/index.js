@@ -1,4 +1,5 @@
 import { handleActions } from 'redux-actions';
+import { AsyncStorage } from 'react-native';
 
 const LOADER = "USER_LOGIN_LOADER";
 const TOKEN = "USER_LOGIN_TOKEN";
@@ -33,12 +34,13 @@ const setIsFailed = isFailed => ({
 // ------------------------------------
 // Actions
 // ------------------------------------
-const loginSubmit = (data) => (dispatch) => {
+const loginSubmit = (data) => async (dispatch) => {
 	dispatch(setLoader(true));
 	dispatch(setIsAuthenticating(true));
 	dispatch(setIsFailed(false));
 	if (data.email === 'demo@gmail.com') {
 		dispatch(setToken('TOKEN-AUTOMÁTICO'));
+		await AsyncStorage.setItem('ENTRE_RIOS_USER_EMAIL', data.email);
 	} else {
 		dispatch(setError('Credenciales incorrectas'));
 		dispatch(setIsFailed(true));
@@ -46,10 +48,12 @@ const loginSubmit = (data) => (dispatch) => {
 	dispatch(setIsAuthenticating(false));
 	dispatch(setLoader(false));
 };
-const logoutSubmit = () => (dispatch) => {
+const logoutSubmit = () => async (dispatch) => {
 	dispatch(setLoader(true));
 	dispatch(setToken(null));
 	dispatch(setLoader(false));
+	const email = await AsyncStorage.getItem('ENTRE_RIOS_USER_EMAIL');
+	console.log('EMAIL-GUARDADO:', email)
 };
 
 export const actions = {

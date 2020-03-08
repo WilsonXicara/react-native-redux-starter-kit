@@ -113,7 +113,10 @@ LoginForm.propTypes = {
 };
 
 const LoginContainer = reduxForm({
-	form: 'login'
+	form: 'login',
+    initialValues: {
+        email: 'demo@gmail.com',
+    },
 })(LoginForm);
 
 const mstp = state => ({
