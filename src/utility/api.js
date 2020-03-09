@@ -1,49 +1,44 @@
 import { URL_BASE } from './constants';
-
-// const request = require('superagent');
-const request = require('axios/index');
-const { AsyncStorage } = require('react-native');
+/**
+ * En las peticiones HTTP de Axios, el body del Response está en Response.data
+ */
+import * as request  from 'axios/index';
+import { AsyncStorage } from 'react-native';
 
 export const KEY_USER_TOKEN = 'ENTRE_RIOS_USER_TOKEN';
 export const KEY_USER_INFO = 'ENTRE_RIOS_USER_INFO';
-
-const HEADER = {
+const BASE_HEADER = {
 	'Accept': 'application/json',
 	'Content-Type': 'application/json',
 }
 
-
 /**
- * Funcion para obtener el token
- * */
-async function getToken() {
-    try{
-        // await AsyncStorage.removeItem(KEY_USER_TOKEN);
-        // const token = 'jalsdf';
+ * Función que devuelve el Token de autenticación (almacenado en AsyncStorage).
+ * @return: string: `Token ${token}`, o `false` si  el token no existe.
+ */
+const getToken = async () => {
+    try {
         const token = await AsyncStorage.getItem(KEY_USER_TOKEN);
         console.log('OBTENER-TOKEN:', token);
         if (token) {
             return `Token ${token}`;
         }
-    } catch(error) {
+    } catch (error) {
         console.error('ERROR-OBTENER-TOKEN:', error);
     }
     return false;
 }
 
 /**
- * Funcion para hacer la url absoluta con query string a partir de una Url relativa y params
- * @param path: string: ruta relativa
- * @param params: dict: parametros para poner como query string
- * @return: string: string con la url absoluta para la peticion
+ * Funcion para construir la URL absoluta de la petición, agregando los `params` proporcionados.
+ * Toma como base `${URL_BASE}api`.
+ * @param path: string: ruta relativa.
+ * @param params: dict: parametros para poner como query string.
+ * @return: string: string con la url absoluta para la peticion.
  * */
-export function makeUrl(path, params = {}) {
+const makeUrl = (path, params = {}) => {
     let url = `${URL_BASE}api`;
-    if (path[0] === '/') {
-        url += `${path}/`;
-    } else {
-        url += `/${path}/`;
-    }
+    url+= `${path[0] === '/' ? '' : '/'}${path}${path[path.length-1] === '/' ? '' : '/'}`;
     let hasQueue = false; // se coloca que no hay aun query string
     // por cada atributo en los params se inserta en el query string
     const dicKeys = Object.keys(params);
@@ -55,19 +50,20 @@ export function makeUrl(path, params = {}) {
             hasQueue = true;
         }
     });
-    // Se retorna la url absoluta con query string si fuera el caso
     return url;
 }
-async function makeHeaders() {
-    const headers = {...HEADER};
+
+/**
+ * Función que construye el HEADER para las peticiones HTTP, y le agrega la cabecera de Token (si este último está guardado).
+ */
+const makeHeaders = async () => {
+    const headers = { ...BASE_HEADER };
     try {
         const token = await getToken();
-        if (token) {
-            headers['Authorization'] = token;
-        }
-	} catch(error) {
-        console.log('MAKE-HEADERS-ERROR:', error);
-	}
+        token && (headers['Authorization'] = token);
+    } catch (error) {
+        console.log('API-MAKE-HEADERS-ERROR:', error);
+    }
     return headers;
 }
 
@@ -75,15 +71,14 @@ async function makeHeaders() {
  * Funcion para manejar los errores de cualquier petición
  * @param response: response: response de la peticion
  * */
-async function errorHandler(response) {
+const errorHandler = async (response) => {
     // Estado 401 o 403 redirigen al login
-    if (response.statusCode === 401 || response.statusCode === 403) {
-        try{
+    if (response.status === 401 || response.status === 403) {
+        try {
             await AsyncStorage.removeItem(KEY_USER_TOKEN);
-        } catch(error) {
-            console.error('ERROR-ELIMINAR-TOKEN:', error);
+        } catch (error) {
+            console.error('API-ELIMINAR-TOKEN-ERROR:', error);
         }
-        localStorage.removeItem('token');
         // TODO: Redirigir a la ventana de Login
         // window.location.assign('/#/login');
     } else {
@@ -92,30 +87,26 @@ async function errorHandler(response) {
 }
 
 /**
- * Funcion para hacer una peticion POST
+ * Función que devuelve un Promise con la petición POST.
  * @param path: string: path relativo de la peticion
  * @param body: dict: el body para el POST
  * @param params: dict: parametros para query string, opcionales
  * @return: Promise: promise del POST
  * */
-async function post(path, body, params = {}) {
+const post = async (path, body, params = {}) => {
     const baseURL = makeUrl(path, params);
     const data = {...body};
     try {
         const headers = await makeHeaders();
         const response = await request.post(`${baseURL}`, data, {headers});
-        console.log('POST-RESPONSE:', response);
-        // Construcción de la Promesa
         return new Promise((resolve, reject) => {
-            resolve(response.data ? response.data : response)
+            resolve(response.data ? response.data : response);
         });
 	} catch(error) {
-        console.log('POST-ERROR:', error);
+        console.log('API-POST-ERROR:', error.response);
         return new Promise((resolve, reject) => {
-            if (error && error.response) {
-                errorHandler(error.response);
-            }
-            reject(error.response && error.response.body ? error.response.body : error);
+            errorHandler(error.response);
+            reject(error.response && error.response.data ? error.response.data : error);
         });
 	}
 }
@@ -219,31 +210,26 @@ function putAttachments(path, body, attachments, params = {}) {
 }
 
 /**
- * TODO: Aún no probado
- * Funcion para hacer una peticion put
+ * Función que devuelve un Promise con la petición PUT.
  * @param path: string: path relativo de la peticion
  * @param body: dict: el body para el put
  * @param params: dict: parametros para query string, opcionales
  * @return: Promise: promise del put
  * */
-async function put(path, body, params = {}) {
+const put = async (path, body, params = {}) => {
     const baseURL = makeUrl(path, params);
     const data = {...body};
     try {
         const headers = await makeHeaders();
         const response = await request.put(`${baseURL}`, data, {headers});
-        console.log('PUT-RESPONSE:', response);
-        // Construcción de la Promesa
         return new Promise((resolve, reject) => {
             resolve(response.data ? response.data : response)
         });
 	} catch(error) {
-        console.log('PUT-ERROR:', error);
+        console.log('API-PUT-ERROR:', error);
         return new Promise((resolve, reject) => {
-            if (error && error.response) {
-                errorHandler(error.response);
-            }
-            reject(error.response && error.response.body ? error.response.body : error);
+            errorHandler(error.response);
+            reject(error.response && error.response.data ? error.response.data : error);
         });
 	}
 }
@@ -264,50 +250,51 @@ function _delete(path) {
 }
 
 /**
- * TODO: No revisado
- * Funcion para hacer una peticion delete
+ * Función que devuelve un Promise con la petición DELETE.
  * @param path: string: path relativo de la peticion
  * @return: Promise: promise del delete
  * */
-function eliminar(path) {
-    return new Promise((resolve, reject) => {
-        _delete(path).then((response) => {
-            if (response.body) {
-                resolve(response.body);
-            }
-            resolve(response);
-        }).catch((error) => {
-            errorHandler(error.response);
-            reject(error.response.body);
-        });
-    });
-}
-
-/**
- * Funcion para hacer una peticion get
- * @param path: string: path relativo de la peticion
- * @param params: dict: parametros para query string, opcionales
- * @return: Promise: promise del get
- * */
-async function get(path, params = {}) {
-    const baseURL = makeUrl(path, params);
+const eliminar = async (path) => {
+    const baseURL = makeUrl(path, {});
     try {
         const headers = await makeHeaders();
-        const response = await request.get(`${baseURL}`, {headers});
-        console.log('GET-RESPONSE:', response);
-        // Construcción de la Promesa
+        const response = await request.post(`${baseURL}`, {headers});
         return new Promise((resolve, reject) => {
-            resolve(response.data ? response.data : response)
+            resolve(response.data ? response.data : response);
         });
 	} catch(error) {
-        console.log('GET-ERROR:', error);
+        console.log('API-DELETE-ERROR:', error);
         return new Promise((resolve, reject) => {
-            if (error && error.response) {
-                errorHandler(error.response);
-            }
-            reject(error.response && error.response.body ? error.response.body : error);
+            errorHandler(error.response);
+            reject(error.response && error.response.data ? error.response.data : error);
         });
 	}
 }
 
-export const api = { get, post, put, eliminar, postAttachments, putAttachments };
+/**
+ * Función que devuelve un Promise con la petición GET.
+ * @param path: string: path relativo de la peticion
+ * @param params: dict: parametros para query string, opcionales
+ * @return: Promise: promise del get
+ * */
+const get = async (path, params = {}) => {
+    const baseURL = makeUrl(path, params);
+    try {
+        const headers = await makeHeaders();
+        const response = await request.get(`${baseURL}`, {headers});
+        return new Promise((resolve, reject) => {
+            resolve(response.data ? response.data : response)
+        });
+	} catch(error) {
+        console.log('API-GET-ERROR:', error);
+        return new Promise((resolve, reject) => {
+            errorHandler(error.response);
+            reject(error.response && error.response.data ? error.response.data : error);
+        });
+	}
+}
+
+export const api = {
+    get, post, put, eliminar,
+    // postAttachments, putAttachments,
+};
