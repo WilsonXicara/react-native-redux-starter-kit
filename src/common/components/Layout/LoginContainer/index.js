@@ -6,7 +6,6 @@ import { Field, reduxForm } from 'redux-form';
 import { connect } from 'react-redux';
 import Login from '../components/Login';
 import { actions } from '../../../../redux/modules/auth';
-import { actions as actionsFincas } from '../../../../redux/modules/fincas';
 import { emailFormat, required, alphaNumeric } from './validators';
 import styles from  './styles';
 
@@ -36,10 +35,6 @@ class LoginForm extends Component {
 				this.props.navigation.navigate('App');
 			}
 		}
-	}
-	componentWillMount() {
-		const { listar } = this.props;
-		listar(1);
 	}
 
 	renderInput({ input, label, type, meta: { touched, error, warning } }) {
@@ -136,7 +131,7 @@ const mstp = state => ({
 	loginForm: state.form.login
 });
 const mdtp = {
-    ...actions, ...actionsFincas,
+    ...actions,
 };
 
 export default connect(mstp, mdtp)(LoginContainer);

@@ -51,11 +51,11 @@ const loginSubmit = (data) => async (dispatch) => {
 	dispatch(setIsFailed(false));
 	try {
 		const response = await api.post('user/token/', data);
-		await AsyncStorage.setItem(KEY_USER_TOKEN, response.token);
-		// TODO: Pendiente cómo guardar un objeto
-		// await AsyncStorage.setItem(KEY_USER_INFO, response.user);
 		dispatch(setToken(response.token));
 		dispatch(setMe(response.user));
+		await AsyncStorage.setItem(KEY_USER_TOKEN, response.token);
+		// TODO: Pendiente si se guardará o no la información del usuario
+		// await AsyncStorage.setItem(KEY_USER_INFO, JSON.stringify(response.user));
 	} catch(error) {
 		console.log('ERROR-LOGIN:', error)
 		dispatch(setError(error));
@@ -65,32 +65,17 @@ const loginSubmit = (data) => async (dispatch) => {
 		dispatch(setLoader(false));
 	}
 };
-// 
-// const loginSubmit = (data) => async (dispatch) => {
-// 	dispatch(setLoader(true));
-// 	dispatch(setIsAuthenticating(true));
-// 	dispatch(setIsFailed(false));
-// 	api.post('user/token/', data)
-// 		.then(response => {
-// 			dispatch(setToken(response.token));
-// 			dispatch(setMe(response.user));
-// 		})
-// 		.catch(error => {
-// 			dispatch(setError(error));
-// 			dispatch(setIsFailed(true));
-// 		})
-// 		.finally(() => {
-// 			dispatch(setIsAuthenticating(false));
-// 			dispatch(setLoader(false));
-// 		});
-// };
 const logoutSubmit = () => async (dispatch) => {
 	try {
-		const token = await AsyncStorage.getItem(KEY_USER_TOKEN);
-		await AsyncStorage.removeItem(KEY_USER_TOKEN);
-		console.log('TOKEN-ELIMINADO:', token)
+		// const token = await AsyncStorage.getItem(KEY_USER_TOKEN);
+		// await AsyncStorage.removeItem(KEY_USER_TOKEN);
+		// console.log('TOKEN-ELIMINADO:', token)
+		// TODO: Pendiente si es que se guarda la información del usuario
+		// const user = await AsyncStorage.getItem(KEY_USER_INFO);
+		// console.log('USER-ELIMINADO:', user);
+		// await AsyncStorage.removeItem(KEY_USER_INFO);
 	} catch(error) {
-		console.log('ERROR-LOGOUT:', error)
+		console.log('LOGOUT-ERROR:', error);
 	} finally {
 		dispatch(setLoader(true));
 		dispatch(setToken(null));
